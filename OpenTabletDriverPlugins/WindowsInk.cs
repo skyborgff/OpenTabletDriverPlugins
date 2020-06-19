@@ -6,6 +6,7 @@ using TabletDriverPlugin.Tablet;
 using TabletDriverPlugin.Platform.Display;
 using HidSharp;
 using System;
+using System.Drawing;
 using System.Runtime.InteropServices;
 
 namespace TabletDriverPlugins
@@ -209,7 +210,7 @@ namespace TabletDriverPlugins
             if (TabletProperties.ActiveReportID != 0 && report.ReportID <= TabletProperties.ActiveReportID)
                 return;
 
-            var pos = new Point(report.Position.X, report.Position.Y);
+            var pos = new TabletDriverPlugin.Point(report.Position.X, report.Position.Y);
 
             // Pre Filter
             foreach (IFilter filter in _preFilters)
@@ -229,7 +230,7 @@ namespace TabletDriverPlugins
             // Rotation
             if (Input.Rotation != 0f)
             {
-                var tempCopy = new Point(pos.X, pos.Y);
+                var tempCopy = new TabletDriverPlugin.Point(pos.X, pos.Y);
                 pos.X = (tempCopy.X * _rotationMatrix[0]) + (tempCopy.Y * _rotationMatrix[1]);
                 pos.Y = (tempCopy.X * _rotationMatrix[2]) + (tempCopy.Y * _rotationMatrix[3]);
             }
@@ -347,6 +348,14 @@ namespace TabletDriverPlugins
             {
                 var data = GetBytes(inkReport);
                 VMultiStream.Write(data);
+                var g = Graphics.FromHwnd(IntPtr.Zero);
+
+                Brush brsh = new SolidBrush(Color.Red);
+
+                g.FillRectangle(brsh,300, 300, 300, 300);
+
+                brsh.Dispose();
+                g.Dispose();
             }
             catch (Exception e)
             {
